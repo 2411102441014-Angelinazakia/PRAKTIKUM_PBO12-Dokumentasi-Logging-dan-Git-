@@ -59,29 +59,29 @@ class INotificationService(ABC):
 # --- IMPLEMENTASI KONKRIT (Plug-in)
 class CreditCardProcessor(IPaymentProcessor):
     def process(self, order: Order) -> bool:
-        # Ganti print() dengan logging.INFO 
+        # Ganti print() dengan logging.INFO [cite: 52]
         LOGGER.info(f"Payment: Memproses Kartu Kredit untuk {order.customer_name}.")
         return True
 
 class EmailNotifier(INotificationService):
     def send(self, order: Order):
-        # Ganti print() dengan logging.INFO 
+        # Ganti print() dengan logging.INFO [cite: 52]
         LOGGER.info(f"Notif: Mengirim email konfirmasi ke {order.customer_name}.")
 
 # --- KELAS KOORDINATOR (SRP & DIP)
 class CheckoutService:
     """
-    Kelas high-level untuk mengkoordinasi proses transaksi pembayaran.
+    Kelas high-level untuk mengkoordinasi proses transaksi pembayaran. [cite: 36]
     
-    Kelas ini memisahkan logika pembayaran dan notifikasi (memenuhi SRP).
+    Kelas ini memisahkan logika pembayaran dan notifikasi (memenuhi SRP). [cite: 37]
     """
     def __init__(self, payment_processor: IPaymentProcessor, notifier: INotificationService):
         """
-        Menginisialisasi CheckoutService dengan dependensi yang diperlukan. 
+        Menginisialisasi CheckoutService dengan dependensi yang diperlukan. [cite: 40]
         
         Args:
-            payment_processor (IPaymentProcessor): Implementasi interface pembayaran.
-            notifier (INotificationService): Implementasi interface notifikasi.
+            payment_processor (IPaymentProcessor): Implementasi interface pembayaran. [cite: 42]
+            notifier (INotificationService): Implementasi interface notifikasi. [cite: 42]
         """
         # Dependency Injection (DIP): Bergantung pada Abstraksi, bukan Konkrit
         self.payment_processor = payment_processor
@@ -89,15 +89,15 @@ class CheckoutService:
 
     def run_checkout(self, order: Order) -> bool:
         """
-        Menjalankan proses checkout dan memvalidasi pembayaran. 
+        Menjalankan proses checkout dan memvalidasi pembayaran. [cite: 45]
         
         Args:
-            order (Order): Objek pesanan yang akan diproses. 
+            order (Order): Objek pesanan yang akan diproses. [cite: 47]
             
         Returns:
-            bool: True jika checkout sukses, False jika gagal. 
+            bool: True jika checkout sukses, False jika gagal. [cite: 49]
         """
-        # Logging alih-alih print() 
+        # Logging alih-alih print() [cite: 57]
         LOGGER.info(f"Memulai checkout untuk {order.customer_name}. Total: {order.total_price}")
         
         payment_success = self.payment_processor.process(order)
@@ -105,13 +105,14 @@ class CheckoutService:
         if payment_success:
             order.status = "paid"
             self.notifier.send(order)
-            # Ganti print() dengan logging.INFO 
+            # Ganti print() dengan logging.INFO [cite: 62]
             LOGGER.info("Checkout Sukses. Status pesanan: PAID.")
             return True
         
-        # Ganti print() dengan logging.ERROR/WARNING 
+        # Ganti print() dengan logging.ERROR/WARNING [cite: 65]
         LOGGER.error("Pembayaran gagal. Transaksi dibatalkan.")
         return False
+    
 
 # --- PROGRAM UTAMA
 andi_order = Order("Andi", 500000)
